@@ -5,6 +5,10 @@ class Article < ActiveRecord::Base
   
   validates_presence_of :title, :body
   validates_uniqueness_of :title
+
+  validates_presence_of :user_id
+  validates_numericality_of :user_id
+  belongs_to :user
   
   attr_writer :tag_names
   after_save :assign_tags
@@ -20,6 +24,8 @@ class Article < ActiveRecord::Base
   def assign_tags
     if @tag_names
       self.tags = @tag_names.split(/\,/).map do |name|
+        name.rstrip!
+        name.lstrip!
         Tag.find_or_create_by_name(name)
       end
     end
