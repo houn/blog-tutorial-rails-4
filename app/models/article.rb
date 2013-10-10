@@ -13,7 +13,9 @@ class Article < ActiveRecord::Base
   attr_writer :tag_names
   after_save :assign_tags
   
-  
+  scope :published, lambda {{:conditions => ['published = ?', true]}}
+  scope :ordered, lambda {{:order => "Created_at DESC" }}
+
   def tag_names
     @tag_names || tags.map(&:name).join(' ')
   end
@@ -21,14 +23,14 @@ class Article < ActiveRecord::Base
   
   private
   
-  def assign_tags
-    if @tag_names
-      self.tags = @tag_names.split(/\,/).map do |name|
-        name.rstrip!
-        name.lstrip!
-        Tag.find_or_create_by_name(name)
+    def assign_tags
+      if @tag_names
+        self.tags = @tag_names.split(/\,/).map do |name|
+          name.rstrip! # delete all spaces to the right from tag
+          name.lstrip! # delete all spaces to the left from tag
+          Tag.find_or_create_by_name(name)
+        end
       end
-    end
-  end  
+    end  
   
 end

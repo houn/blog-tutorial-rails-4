@@ -6,7 +6,7 @@ class ArticlesController < ApplicationController
   # GET /articles
   # GET /articles.json
   def index
-    @articles = Article.all.includes(:user)
+    @articles = Article.ordered.published.page(params[:page]).per(5)
   end
 
   # GET /articles/1
@@ -74,6 +74,6 @@ class ArticlesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def article_params
-      params.require(:article).permit(:title, :body, :tag_names)
+      params.require(:article).permit(:title, :body, :tag_names, :published)
     end
 end
