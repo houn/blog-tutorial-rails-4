@@ -13,8 +13,8 @@ class Article < ActiveRecord::Base
   attr_writer :tag_names
   after_save :assign_tags
   
-  scope :published, lambda {{:conditions => ['published = ?', true]}}
-  scope :ordered, lambda {{:order => "Created_at DESC" }}
+  scope :published, lambda { where('published = ?', true)}
+  scope :ordered, order('created_at DESC')
 
   def tag_names
     @tag_names || tags.map(&:name).join(' ')
